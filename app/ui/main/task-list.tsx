@@ -6,6 +6,7 @@ import { fetchTask } from '@/app/lib/action';
 import { tasksTodoPage01 } from '@/app/lib/placeholder-data';
 import { TaskSchema, PaginationTaskSchema } from '@/app/lib/decoders';
 import { TaskData } from '@/app/lib/definitions';
+import { LoadMore } from './load-more';
 
 const now = new Date();
 
@@ -37,6 +38,7 @@ export default async function TaskList({
           })}
         </div>
       </Suspense>
+      <LoadMore />
     </div>
   );
 }
