@@ -7,12 +7,14 @@ import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useReducer } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { SwipeableList, SwipeableListItem } from 'react-swipeable-list';
+import 'react-swipeable-list/dist/styles.css';
 
 import { PaginationTaskSchema } from '@/app/lib/decoders';
 import { TaskData, TaskPagination, TaskType } from '@/app/lib/definitions';
 import { tasksTodoPage01 } from '@/app/lib/placeholder-data';
 
-import { Card } from './task-card';
+import { Card, DeleteCardAction } from './task-card';
 import { fetchTask } from '@/app/lib/action';
 
 dayjs.extend(isToday);
@@ -119,6 +121,11 @@ export function TaskInifiniteScroll() {
       });
     });
   };
+
+  const handleDeleteTask = ({ id, title }: TaskData) => {
+    console.log(`>>> Delte task ${id} - ${title}`);
+  };
+
   useEffect(() => {
     if (inView && state.currentPage < state.totalPage) {
       console.log('load more!');
@@ -153,24 +160,32 @@ export function TaskInifiniteScroll() {
             return (
               <div
                 key={`task-list-date-group-${dateGroup}`}
-                className="flex flex-col "
+                className="flex w-full flex-col"
               >
                 <h2 className="text-2xl font-medium">
                   {getGroupDateLabel(dateGroup)}
                 </h2>
-                <div className="flex flex-col">
-                  {state.tasksGroupByDate[dateGroup]
-                    .sort((a: TaskData, b: TaskData) => {
-                      return a.createdAt.getTime() - b.createdAt.getTime();
-                    })
-                    .map((task: TaskData, index: number) => {
-                      return (
-                        <Card
-                          key={`task-card-${task.id}-${index}-${dateGroup}`}
-                          {...task}
-                        />
-                      );
-                    })}
+                <div className="flex w-full flex-col">
+                  <SwipeableList fullSwipe={true}>
+                    {state.tasksGroupByDate[dateGroup]
+                      .sort((a: TaskData, b: TaskData) => {
+                        return a.createdAt.getTime() - b.createdAt.getTime();
+                      })
+                      .map((task: TaskData, index: number) => {
+                        return (
+                          <SwipeableListItem
+                            trailingActions={DeleteCardAction(() =>
+                              handleDeleteTask(task),
+                            )}
+                          >
+                            <Card
+                              key={`task-card-${task.id}-${index}-${dateGroup}`}
+                              {...task}
+                            />
+                          </SwipeableListItem>
+                        );
+                      })}
+                  </SwipeableList>
                 </div>
               </div>
             );
