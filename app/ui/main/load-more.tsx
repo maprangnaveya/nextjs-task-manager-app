@@ -20,24 +20,41 @@ type Action =
       pagination: TaskPagination;
     }
   | { type: ReducerAction.AddPaginationTasks; pagination: TaskPagination };
+
+type TasksGroupByDate = { [date: string]: Array<TaskData> };
 type State = {
   tasks: Array<TaskData>;
+  tasksGroupByDate: TasksGroupByDate;
   currentPage: number;
   totalPage: number;
 };
 
 const initialState = {
   tasks: [],
+  tasksGroupByDate: {},
   currentPage: 1,
   totalPage: 1,
 };
 
+const groupTasksByDate = (tasks: Array<TaskData>) => {
+  const groupByDate: TasksGroupByDate = {};
+  tasks.forEach((task: TaskData) => {
+    const dateKey = task.createdAt.toISOString().split('T')[0];
+    if (!groupByDate[dateKey]) {
+      groupByDate[dateKey] = [];
+    }
+    groupByDate[dateKey].push(task);
+  });
+  return groupByDate;
+};
 const mainReducer = (state: State, action: Action) => {
   switch (action.type) {
     case ReducerAction.SetPaginationTasks: {
+      const newTasks = [...state.tasks, ...action.pagination.tasks];
       return {
         ...state,
-        tasks: [...state.tasks, ...action.pagination.tasks],
+        tasks: newTasks,
+        tasksGroupByDate: groupTasksByDate(newTasks),
         currentPage: action.pagination.pageNumber,
         totalPage: action.pagination.totalPages,
       };
@@ -46,6 +63,7 @@ const mainReducer = (state: State, action: Action) => {
       return {
         ...state,
         tasks: action.pagination.tasks,
+        tasksGroupByDate: groupTasksByDate(action.pagination.tasks),
         currentPage: action.pagination.pageNumber,
         totalPage: action.pagination.totalPages,
       };
@@ -81,12 +99,32 @@ export function TaskInifiniteScroll() {
       pagination: newPaginationTasks,
     });
   }, [searchParams.get('status')]);
-
   return (
     <>
       <div className="flex w-full flex-col items-start justify-start">
-        {state.tasks.map(function (task: TaskData, index: number) {
-          return <Card key={`task-card-${task.id}-${index}`} {...task} />;
+        {Object.keys(state.tasksGroupByDate).map((dateGroup) => {
+          return (
+            <div
+              key={`task-list-date-group-${dateGroup}`}
+              className="flex flex-col"
+            >
+              <h2 className="text-2xl font-medium">{dateGroup}</h2>
+              <div className="flex flex-col">
+                {state.tasksGroupByDate[dateGroup]
+                  .sort((a: TaskData, b: TaskData) => {
+                    return b.createdAt.getTime() - a.createdAt.getTime();
+                  })
+                  .map((task: TaskData, index: number) => {
+                    return (
+                      <Card
+                        key={`task-card-${task.id}-${index}-${dateGroup}`}
+                        {...task}
+                      />
+                    );
+                  })}
+              </div>
+            </div>
+          );
         })}
       </div>
       <section>
