@@ -1,10 +1,6 @@
-export function Card({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
+import { TaskData, TaskType } from '@/app/lib/definitions';
+
+export function Card({ title, description }: TaskData) {
   return (
     <div className="bg-gray-50 p-2">
       <div className="flex flex-col">
