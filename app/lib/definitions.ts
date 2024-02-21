@@ -86,3 +86,7 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+export enum TaskType {
+  TODO = "TODO", DOING = "DOING", DONE = "DONE"
+}
