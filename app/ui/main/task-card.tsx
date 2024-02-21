@@ -13,7 +13,7 @@ export const DeleteCardAction = (onSwipeDelete: OnSwipeDeleteCallback) => {
           onSwipeDelete();
         }}
       >
-        <div className="flex flex-col items-center justify-center bg-red-600 py-2 pl-4 text-center text-red-50">
+        <div className="flex flex-col items-center justify-center bg-red-500 py-2 pl-4 text-center text-red-50">
           <TrashIcon className=" h-6 w-6" />
           Delete
         </div>
@@ -22,13 +22,13 @@ export const DeleteCardAction = (onSwipeDelete: OnSwipeDeleteCallback) => {
   );
 };
 
-export function Card({ title, description }: TaskData) {
+export const Card = ({ title, description }: TaskData) => {
   return (
-    <div className="w-full p-2 hover:cursor-pointer hover:bg-violet-200">
+    <div className="w-full p-2 hover:cursor-pointer hover:bg-purple-100">
       <div className="flex flex-col">
-        <h3 className="text-xl font-medium">{title}</h3>
-        <p className={'truncate text-sm'}>{description}</p>
+        <h3 className="truncate text-xl font-medium">{title}</h3>
+        <p className="truncate text-sm">{description}</p>
       </div>
     </div>
   );
-}
+};
