@@ -5,31 +5,12 @@ import { z } from 'zod';
 
 import { authConfig } from './auth.config';
 import type { User } from '@/app/lib/definitions';
+import { users } from './app/lib/placeholder-data';
 
-const users: Array<User> = [
-    {
-        id: "221",
-        name: "Sherlock",
-        username: "sherlock.h",
-        password: "iamsherlockholmes",
-    },
-    {
-        id: "222",
-        name: "John",
-        username: "john.w",
-        password: "iamjohnwatson",
-    },
-    {
-        id: "223",
-        name: "Hudson",
-        username: "mrs.hudson",
-        password: "iamnotyourhousekeeper",
-    },
-]
 
 async function getUser(username: string): Promise<User | undefined> {
     try {
-        const user = users.find(user => user.username == username)
+        const user: User | undefined = users.find(user => user.username == username)
         if (user) {
             return user
         } else {
