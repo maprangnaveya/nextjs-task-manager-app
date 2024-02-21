@@ -1,3 +1,5 @@
+'use client';
+
 import { roboto } from '@/app/ui/fonts';
 import {
   UserIcon,
@@ -5,10 +7,15 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import { useFormState, useFormStatus } from 'react-dom';
+
+import { authenticate } from '@/app/lib/action';
 
 export default function LoginForm() {
+  const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+
   return (
-    <form className="space-y-3">
+    <form className="space-y-3" action={dispatch}>
       <div className="flex-1 items-center justify-center rounded-lg bg-white px-6 pb-4 pt-8">
         <h1 className={`${roboto.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -55,8 +62,17 @@ export default function LoginForm() {
           </div>
         </div>
         <LoginButton />
-        <div className="flex h-8 items-end space-x-1">
-          {/* Add form errors here */}
+        <div
+          className="flex h-8 items-end space-x-1"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {errorMessage && (
+            <>
+              <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+              <p className="text-sm text-red-500">{errorMessage}</p>
+            </>
+          )}
         </div>
       </div>
     </form>
@@ -64,8 +80,11 @@ export default function LoginForm() {
 }
 
 function LoginButton() {
+  const { pending } = useFormStatus();
+
   return (
     <button
+      aria-disabled={pending}
       className={
         'mt-4 flex h-10 w-1/2 items-center rounded-lg bg-violet-500 px-4 text-sm font-medium text-white  aria-disabled:cursor-not-allowed aria-disabled:opacity-50' +
         'transition-colors hover:bg-violet-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 active:bg-violet-600'

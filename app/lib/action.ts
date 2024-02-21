@@ -1,7 +1,10 @@
 "use server";
 
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+
 import { TaskType } from './definitions';
 import { PaginationTaskSchema } from './decoders';
 
@@ -31,4 +34,24 @@ export const fetchTask = async (page: number, status: TaskType = TaskType.TODO) 
 
     console.log(">>> data: ", data)
     return PaginationTaskSchema.parse(data);
+}
+
+export const authenticate = async (
+    prevState: string | undefined,
+    formData: FormData,
+) => {
+    try {
+        await signIn('credentials', formData);
+    } catch (error) {
+        if (error instanceof AuthError) {
+            switch (error.type) {
+                case 'CredentialsSignin':
+                    return 'Invalid credentials.';
+                default:
+                    console.log(">>> error: ", error);
+                    return 'Something went wrong.';
+            }
+        }
+        throw error;
+    }
 }
