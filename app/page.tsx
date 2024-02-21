@@ -16,7 +16,7 @@ export default function Page({
   const status = searchParams?.status || '';
 
   return (
-    <main className="flex min-h-full w-3/5 flex-col rounded-xl bg-purple-50 px-10">
+    <main className="flex min-h-full w-3/5 flex-col rounded-xl bg-purple-50 px-10 pb-10">
       <div className="h-10 px-6 py-20">
         <h1 className=" text-4xl font-bold">Hello There, {userFullName}!</h1>
         <p>Have a nice day!</p>
