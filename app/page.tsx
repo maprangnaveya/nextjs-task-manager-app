@@ -5,7 +5,15 @@ import TaskList from './ui/main/task-list';
 // TODO: Get user full name
 let userFullName = 'Sherlock';
 
-export default function Page() {
+export default function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    status?: string;
+  };
+}) {
+  const status = searchParams?.status || '';
+
   return (
     <main className="flex min-h-screen flex-col p-6 md:px-20 md:py-10">
       <div className="flex h-20 shrink-0 items-end rounded-lg bg-blue-500 p-4 md:h-52">
