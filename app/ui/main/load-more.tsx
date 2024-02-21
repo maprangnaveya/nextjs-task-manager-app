@@ -1,13 +1,21 @@
 'use client';
 
+import dayjs from 'dayjs';
+import isToday from 'dayjs/plugin/isToday';
+import isTomorrow from 'dayjs/plugin/isTomorrow';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useReducer } from 'react';
+import { useInView } from 'react-intersection-observer';
+
 import { PaginationTaskSchema } from '@/app/lib/decoders';
 import { TaskData, TaskPagination } from '@/app/lib/definitions';
 import { tasksTodoPage01 } from '@/app/lib/placeholder-data';
-import Image from 'next/image';
-import { useEffect, useReducer } from 'react';
-import { useInView } from 'react-intersection-observer';
+
 import { Card } from './task-card';
-import { useSearchParams } from 'next/navigation';
+
+dayjs.extend(isToday);
+dayjs.extend(isTomorrow);
 
 const enum ReducerAction {
   SetPaginationTasks,
@@ -38,6 +46,7 @@ const initialState = {
 
 const groupTasksByDate = (tasks: Array<TaskData>) => {
   const groupByDate: TasksGroupByDate = {};
+
   tasks.forEach((task: TaskData) => {
     const dateKey = task.createdAt.toISOString().split('T')[0];
     if (!groupByDate[dateKey]) {
@@ -71,6 +80,17 @@ const mainReducer = (state: State, action: Action) => {
   }
 };
 
+const getGroupDateLabel = (dateStr: string) => {
+  const targetDate = dayjs(dateStr);
+  if (targetDate.isToday()) {
+    return 'Today';
+  } else if (targetDate.isTomorrow()) {
+    return 'Tomorrow';
+  } else {
+    return targetDate.format('DD MMM YYYY').toUpperCase();
+  }
+};
+
 export function TaskInifiniteScroll() {
   const searchParams = useSearchParams();
 
@@ -101,31 +121,43 @@ export function TaskInifiniteScroll() {
   }, [searchParams.get('status')]);
   return (
     <>
-      <div className="flex w-full flex-col items-start justify-start">
-        {Object.keys(state.tasksGroupByDate).map((dateGroup) => {
-          return (
-            <div
-              key={`task-list-date-group-${dateGroup}`}
-              className="flex flex-col"
-            >
-              <h2 className="text-2xl font-medium">{dateGroup}</h2>
-              <div className="flex flex-col">
-                {state.tasksGroupByDate[dateGroup]
-                  .sort((a: TaskData, b: TaskData) => {
-                    return b.createdAt.getTime() - a.createdAt.getTime();
-                  })
-                  .map((task: TaskData, index: number) => {
-                    return (
-                      <Card
-                        key={`task-card-${task.id}-${index}-${dateGroup}`}
-                        {...task}
-                      />
-                    );
-                  })}
+      <div className="flex w-full flex-col items-start justify-start gap-6">
+        {Object.keys(state.tasksGroupByDate)
+          .sort((a: string, b: string) => {
+            if (a < b) {
+              return 1;
+            } else if (a > b) {
+              return -1;
+            } else {
+              return 0;
+            }
+          })
+          .map((dateGroup) => {
+            return (
+              <div
+                key={`task-list-date-group-${dateGroup}`}
+                className="flex flex-col "
+              >
+                <h2 className="text-2xl font-medium">
+                  {getGroupDateLabel(dateGroup)}
+                </h2>
+                <div className="flex flex-col">
+                  {state.tasksGroupByDate[dateGroup]
+                    .sort((a: TaskData, b: TaskData) => {
+                      return b.createdAt.getTime() - a.createdAt.getTime();
+                    })
+                    .map((task: TaskData, index: number) => {
+                      return (
+                        <Card
+                          key={`task-card-${task.id}-${index}-${dateGroup}`}
+                          {...task}
+                        />
+                      );
+                    })}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
       <section>
         {state.currentPage != state.totalPage && (
