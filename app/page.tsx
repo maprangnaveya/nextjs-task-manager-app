@@ -1,7 +1,8 @@
-import TaskTabs from './ui/main/task-tabs';
-import TaskList from './ui/main/task-list';
-import { InvoicesTableSkeleton } from './ui/skeletons';
 import { Suspense } from 'react';
+
+import TaskTabs from './ui/main/task-tabs';
+import { InvoicesTableSkeleton } from './ui/skeletons';
+import { TaskInifiniteScroll } from './ui/main/task-list';
 
 // TODO: Get user full name
 let userFullName = 'Sherlock';
@@ -26,9 +27,11 @@ export default function Page({
           <TaskTabs />
         </div>
         <div className="relative flex w-full">
-          <Suspense fallback={<InvoicesTableSkeleton />}>
-            <TaskList />
-          </Suspense>
+          <div className="relative w-full">
+            <Suspense fallback={<InvoicesTableSkeleton />}>
+              <TaskInifiniteScroll />
+            </Suspense>
+          </div>
         </div>
       </div>
     </>
