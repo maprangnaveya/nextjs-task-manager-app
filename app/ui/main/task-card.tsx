@@ -1,4 +1,22 @@
-import { TaskData, TaskType } from '@/app/lib/definitions';
+import { SwipeAction, TrailingActions } from 'react-swipeable-list';
+import { TaskData } from '@/app/lib/definitions';
+
+type OnSwipeDeleteCallback = () => void;
+export const DeleteCardAction = (onSwipeDelete: OnSwipeDeleteCallback) => {
+  return (
+    <TrailingActions>
+      <SwipeAction
+        destructive={true}
+        onClick={() => {
+          console.log('swipe action delete triggered!');
+          onSwipeDelete();
+        }}
+      >
+        Delete
+      </SwipeAction>
+    </TrailingActions>
+  );
+};
 
 export function Card({ title, description }: TaskData) {
   return (
