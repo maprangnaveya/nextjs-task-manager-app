@@ -72,6 +72,15 @@ export function LoadMore() {
     }
   }, [inView]);
 
+  useEffect(() => {
+    console.log('!! status changed!', searchParams.get('status'));
+    const newPaginationTasks = PaginationTaskSchema.parse(tasksTodoPage01);
+
+    dispatch({
+      type: ReducerAction.AddPaginationTasks,
+      pagination: newPaginationTasks,
+    });
+  }, [searchParams.get('status')]);
 
   return (
     <>
