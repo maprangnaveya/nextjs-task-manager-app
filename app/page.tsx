@@ -7,15 +7,7 @@ import { TaskInifiniteScroll } from './ui/main/task-list';
 // TODO: Get user full name
 let userFullName = 'Sherlock';
 
-export default function Page({
-  searchParams,
-}: {
-  searchParams?: {
-    status?: string;
-  };
-}) {
-  const status = searchParams?.status || '';
-
+export default function Page() {
   return (
     <>
       <div className="h-10 px-6 py-20">
