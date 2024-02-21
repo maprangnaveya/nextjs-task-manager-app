@@ -1,7 +1,13 @@
-import { lusitana } from '@/app/ui/fonts';
+import { roboto } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { Card } from './task-card';
+import { fetchTask } from '@/app/lib/action';
+import { tasksTodoPage01 } from '@/app/lib/placeholder-data';
+import { TaskSchema, PaginationTaskSchema } from '@/app/lib/decoders';
+import { TaskData } from '@/app/lib/definitions';
+
+const now = new Date();
 
 export default async function TaskList({
   searchParams,
@@ -13,16 +19,22 @@ export default async function TaskList({
 }) {
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
+  //   const tasksWithPagination = await fetchTask();
+  const tasksWithPagination = PaginationTaskSchema.parse(tasksTodoPage01);
 
   return (
     <div className="relative w-full">
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <div className="flex w-full items-center justify-start">
-          <h1 className={`${lusitana.className} text-4xl`}>Today</h1>
+          <h1 className={`${roboto.className} text-2xl`}>Today</h1>
         </div>
         <div className="flex w-full flex-col items-start justify-start">
-          <Card title="Honey Pancake" description="WOW this is value" />
-          <Card title="Honey Pancake2" description="WOW this is value" />
+          {tasksWithPagination.tasks.map(function (
+            task: TaskData,
+            index: number,
+          ) {
+            return <Card key={`task-card-${task.id}`} {...task} />;
+          })}
         </div>
       </Suspense>
     </div>

@@ -36,13 +36,14 @@ export default function TaskTabs() {
 
   return (
     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-      {Object.keys(TaskType).map(function (tasktype, index) {
+      {Object.keys(TaskType).map(function (tasktype: string, index: number) {
         return (
           <Tab
             key={`task-type-tab-${tasktype}-${index}`}
             label={tasktype}
             id={`task-type-tab-${index}`}
             aria-controls="task-tab-paenl-${tasktype}"
+            className="bg-purple-50"
           />
         );
       })}
