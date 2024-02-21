@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import TaskTabs from './ui/main/task-tabs';
 import { InvoicesTableSkeleton } from './ui/skeletons';
 import { TaskInifiniteScroll } from './ui/main/task-list';
+import { LogoutButton } from './ui/logout-button';
 
 // TODO: Get user full name
 let userFullName = 'Sherlock';
@@ -10,6 +11,7 @@ let userFullName = 'Sherlock';
 export default function Page() {
   return (
     <>
+      <LogoutButton />
       <div className="h-10 px-6 py-20">
         <h1 className=" text-4xl font-bold">Hello There, {userFullName}!</h1>
         <p>Have a nice day!</p>
