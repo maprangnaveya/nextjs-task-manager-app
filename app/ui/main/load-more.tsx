@@ -160,12 +160,12 @@ export function TaskInifiniteScroll() {
             return (
               <div
                 key={`task-list-date-group-${dateGroup}`}
-                className="flex flex-col "
+                className="flex w-full flex-col"
               >
                 <h2 className="text-2xl font-medium">
                   {getGroupDateLabel(dateGroup)}
                 </h2>
-                <div className="flex flex-col">
+                <div className="flex w-full flex-col">
                   <SwipeableList fullSwipe={true}>
                     {state.tasksGroupByDate[dateGroup]
                       .sort((a: TaskData, b: TaskData) => {

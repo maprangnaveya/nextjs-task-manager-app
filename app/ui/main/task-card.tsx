@@ -1,3 +1,4 @@
+import { TrashIcon } from '@heroicons/react/24/outline';
 import { SwipeAction, TrailingActions } from 'react-swipeable-list';
 import { TaskData } from '@/app/lib/definitions';
 
@@ -12,7 +13,10 @@ export const DeleteCardAction = (onSwipeDelete: OnSwipeDeleteCallback) => {
           onSwipeDelete();
         }}
       >
-        Delete
+        <div className="flex flex-col items-center justify-center bg-red-600 py-2 pl-4 text-center text-red-50">
+          <TrashIcon className=" h-6 w-6" />
+          Delete
+        </div>
       </SwipeAction>
     </TrailingActions>
   );
