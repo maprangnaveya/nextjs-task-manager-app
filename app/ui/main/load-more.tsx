@@ -142,9 +142,9 @@ export function TaskInifiniteScroll() {
         {Object.keys(state.tasksGroupByDate)
           .sort((a: string, b: string) => {
             if (a < b) {
-              return 1;
-            } else if (a > b) {
               return -1;
+            } else if (a > b) {
+              return 1;
             } else {
               return 0;
             }
@@ -161,7 +161,7 @@ export function TaskInifiniteScroll() {
                 <div className="flex flex-col">
                   {state.tasksGroupByDate[dateGroup]
                     .sort((a: TaskData, b: TaskData) => {
-                      return b.createdAt.getTime() - a.createdAt.getTime();
+                      return a.createdAt.getTime() - b.createdAt.getTime();
                     })
                     .map((task: TaskData, index: number) => {
                       return (
