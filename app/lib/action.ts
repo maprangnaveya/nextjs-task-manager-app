@@ -49,7 +49,7 @@ export const authenticate = async (
                     return 'Invalid credentials.';
                 default:
                     console.log(">>> error: ", error);
-                    return 'Something went wrong.';
+                    return error.cause?.err?.message || 'Something went wrong.';
             }
         }
         throw error;
