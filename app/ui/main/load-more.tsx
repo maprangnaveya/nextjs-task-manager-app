@@ -174,14 +174,12 @@ export function TaskInifiniteScroll() {
                       .map((task: TaskData, index: number) => {
                         return (
                           <SwipeableListItem
+                            key={`task-card-${task.id}-${index}-${dateGroup}`}
                             trailingActions={DeleteCardAction(() =>
                               handleDeleteTask(task),
                             )}
                           >
-                            <Card
-                              key={`task-card-${task.id}-${index}-${dateGroup}`}
-                              {...task}
-                            />
+                            <Card {...task} />
                           </SwipeableListItem>
                         );
                       })}
