@@ -19,8 +19,11 @@ export async function deleteInvoice(id: string) {
     revalidatePath('/dashboard/invoices');
 }
 
-export const fetchTask = async (offset: number = 0, limit: number = 10, status: TaskType = TaskType.TODO) => {
-    const queryparams = `offset=${offset}&limit=${limit}&sortBy=createdAt&isAsc=true&status=${status}`
+export const fetchTask = async (page: number, status: TaskType = TaskType.TODO) => {
+
+    const limit: number = 10;
+
+    const queryparams = `offset=${page}&limit=${limit}&sortBy=createdAt&isAsc=true&status=${status}`
     console.log(">>> queryparams: ", queryparams);
     const response = await fetch(`https://todo-list-api-mfchjooefq-as.a.run.app/todo-list?${queryparams}`)
 
