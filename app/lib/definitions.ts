@@ -90,3 +90,17 @@ export type InvoiceForm = {
 export enum TaskType {
   TODO = "TODO", DOING = "DOING", DONE = "DONE"
 }
+
+export type TaskData = {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: Date;
+  status: TaskType;
+}
+
+export type TaskPagination = {
+  tasks: Array<TaskData>,
+  pageNumber: number,
+  totalPages: number,
+}
