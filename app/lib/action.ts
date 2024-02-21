@@ -1,5 +1,9 @@
+"use server";
+
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { TaskType } from './definitions';
+import { PaginationTaskSchema } from './decoders';
 
 export async function createSomeObject() {
     // Send request create object
@@ -13,4 +17,15 @@ export async function createSomeObject() {
 export async function deleteInvoice(id: string) {
     // await sql`DELETE FROM invoices WHERE id = ${id}`;
     revalidatePath('/dashboard/invoices');
+}
+
+export const fetchTask = async (offset: number = 0, limit: number = 10, status: TaskType = TaskType.TODO) => {
+    const queryparams = `offset=${offset}&limit=${limit}&sortBy=createdAt&isAsc=true&status=${status}`
+    console.log(">>> queryparams: ", queryparams);
+    const response = await fetch(`https://todo-list-api-mfchjooefq-as.a.run.app/todo-list?${queryparams}`)
+
+    const data = await response.json();
+
+    console.log(">>> data: ", data)
+    return PaginationTaskSchema.parse(data);
 }
