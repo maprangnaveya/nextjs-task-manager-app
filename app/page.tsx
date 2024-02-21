@@ -22,7 +22,7 @@ export default function Page({
         <p>Have a nice day!</p>
       </div>
       <div className="mt-4 flex w-full flex-col items-center justify-center gap-4">
-        <div className="flex flex-col gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-3/5 md:px-20">
+        <div className="px-6 py-10">
           <TaskTabs />
         </div>
         <div className="relative flex w-full">
