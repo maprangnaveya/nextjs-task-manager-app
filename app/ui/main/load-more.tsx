@@ -53,7 +53,7 @@ const mainReducer = (state: State, action: Action) => {
   }
 };
 
-export function LoadMore() {
+export function TaskInifiniteScroll() {
   const searchParams = useSearchParams();
 
   const { ref, inView } = useInView();
