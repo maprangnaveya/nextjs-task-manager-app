@@ -9,10 +9,11 @@ import { useEffect, useReducer } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { PaginationTaskSchema } from '@/app/lib/decoders';
-import { TaskData, TaskPagination } from '@/app/lib/definitions';
+import { TaskData, TaskPagination, TaskType } from '@/app/lib/definitions';
 import { tasksTodoPage01 } from '@/app/lib/placeholder-data';
 
 import { Card } from './task-card';
+import { fetchTask } from '@/app/lib/action';
 
 dayjs.extend(isToday);
 dayjs.extend(isTomorrow);
@@ -91,33 +92,49 @@ const getGroupDateLabel = (dateStr: string) => {
   }
 };
 
+const getTaskStatusType = (taskStatusStr: string | null) => {
+  if (!taskStatusStr) {
+    return TaskType.TODO;
+  }
+  const taskStatus = Object.keys(TaskType).find(
+    (taskType) => taskType.toLowerCase() === taskStatusStr.toLowerCase(),
+  ) as TaskType | undefined;
+  return taskStatus ?? TaskType.TODO;
+};
+
 export function TaskInifiniteScroll() {
   const searchParams = useSearchParams();
 
   const { ref, inView } = useInView();
   const [state, dispatch] = useReducer(mainReducer, initialState);
-
+  const fetchTasksWithPagination = (
+    page: number,
+    reducerAction: ReducerAction,
+  ) => {
+    const taskStatusType = getTaskStatusType(searchParams.get('status'));
+    fetchTask(page, taskStatusType).then((newPaginationTasks) => {
+      dispatch({
+        type: reducerAction,
+        pagination: newPaginationTasks,
+      });
+    });
+  };
   useEffect(() => {
     if (inView && state.currentPage < state.totalPage) {
       console.log('load more!');
       //   TODO: Call api
-      const newPaginationTasks = PaginationTaskSchema.parse(tasksTodoPage01);
-
-      dispatch({
-        type: ReducerAction.SetPaginationTasks,
-        pagination: newPaginationTasks,
-      });
+      fetchTasksWithPagination(
+        state.currentPage,
+        ReducerAction.SetPaginationTasks,
+      );
     }
   }, [inView]);
 
   useEffect(() => {
     console.log('!! status changed!', searchParams.get('status'));
-    const newPaginationTasks = PaginationTaskSchema.parse(tasksTodoPage01);
+    // const newPaginationTasks = PaginationTaskSchema.parse(tasksTodoPage01);
 
-    dispatch({
-      type: ReducerAction.AddPaginationTasks,
-      pagination: newPaginationTasks,
-    });
+    fetchTasksWithPagination(0, ReducerAction.AddPaginationTasks);
   }, [searchParams.get('status')]);
   return (
     <>
