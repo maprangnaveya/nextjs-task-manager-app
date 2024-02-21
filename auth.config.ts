@@ -20,5 +20,8 @@ export const authConfig = {
             return true;
         },
     },
+    session: {
+        maxAge: 24 * 60 * 60,
+    },
     providers: [], // Add providers with an empty array for now
 } satisfies NextAuthConfig;
