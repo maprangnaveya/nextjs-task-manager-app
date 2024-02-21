@@ -8,7 +8,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${roboto.className} antialiased`}>
+      <body className={`${roboto.className} select-none antialiased`}>
         <div
           className={
             'flex min-h-screen justify-center bg-purple-100 p-6 md:p-0 lg:p-0'
