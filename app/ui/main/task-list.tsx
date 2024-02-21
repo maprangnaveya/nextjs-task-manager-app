@@ -2,6 +2,7 @@ import { roboto } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { Card } from './task-card';
+import { fetchTask } from '@/app/lib/action';
 import { tasksTodoPage01 } from '@/app/lib/placeholder-data';
 import { TaskSchema, PaginationTaskSchema } from '@/app/lib/decoders';
 import { TaskData } from '@/app/lib/definitions';
@@ -18,7 +19,7 @@ export default async function TaskList({
 }) {
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
-  //   await fetchTask();
+  //   const tasksWithPagination = await fetchTask();
   const tasksWithPagination = PaginationTaskSchema.parse(tasksTodoPage01);
 
   return (
