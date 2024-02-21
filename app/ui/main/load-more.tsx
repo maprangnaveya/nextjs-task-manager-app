@@ -90,9 +90,11 @@ export function LoadMore() {
         })}
       </div>
       <section>
-        <div ref={ref}>
-          <Image src="./spinner.svg" alt="spinner" width={50} height={50} />
-        </div>
+        {state.currentPage != state.totalPage && (
+          <div ref={ref}>
+            <Image src="./spinner.svg" alt="spinner" width={50} height={50} />
+          </div>
+        )}
       </section>
     </>
   );
