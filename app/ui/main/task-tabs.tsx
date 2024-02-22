@@ -5,6 +5,26 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { TaskType } from '@/app/lib/definitions';
+import { styled } from '@mui/material';
+
+const CustomTabs = styled(Tabs)(() => ({
+  '& .MuiTabs-indicator': {
+    backgroundColor: 'transparent',
+  },
+}));
+
+const CustomTab = styled(Tab)(() => ({
+  '&.Mui-selected': {
+    color: 'white',
+    backgroundColor: '#d9adf2',
+    borderRadius: '30px',
+  },
+  '&': {
+    fontSize: 'large',
+    fontFamily: 'inherit',
+    fontWeight: 'bolder',
+  },
+}));
 
 export default function TaskTabs() {
   const searchParams = useSearchParams();
@@ -35,18 +55,22 @@ export default function TaskTabs() {
   };
 
   return (
-    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+    <CustomTabs
+      value={value}
+      onChange={handleChange}
+      aria-label="task-tab-panel-tabs"
+      TabIndicatorProps={{ style: { background: '#FFFFF' } }}
+    >
       {Object.keys(TaskType).map(function (tasktype: string, index: number) {
         return (
-          <Tab
+          <CustomTab
             key={`task-type-tab-${tasktype}-${index}`}
             label={tasktype}
             id={`task-type-tab-${index}`}
-            aria-controls="task-tab-paenl-${tasktype}"
-            className="bg-purple-50"
+            aria-controls="task-tab-panel-${tasktype}"
           />
         );
       })}
-    </Tabs>
+    </CustomTabs>
   );
 }
