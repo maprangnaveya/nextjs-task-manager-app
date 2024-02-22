@@ -12,7 +12,7 @@ export default function Page() {
       <LogoutButton />
       <Hero />
       <div className="mt-4 flex w-full flex-col items-center justify-center gap-4">
-        <div className="flex pb-4">
+        <div className="flex rounded-full border border-stone-300 p-1.5 ">
           <TaskTabs />
         </div>
         <div className="relative flex w-full">
