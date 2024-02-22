@@ -8,14 +8,27 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { useFormState, useFormStatus } from 'react-dom';
+import secureLocalStorage from 'react-secure-storage';
 
 import { authenticate } from '@/app/lib/action';
+import { useEffect, useState } from 'react';
 
 export default function LoginForm() {
   const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+  const [recentUsername, _setRecentUsername] = useState(
+    secureLocalStorage.getItem('username') as string,
+  );
+
+  const onSubmit = (payload: FormData) => {
+    dispatch(payload);
+    const loggedInUsername = payload.get('username');
+    if (loggedInUsername) {
+      secureLocalStorage.setItem('username', loggedInUsername);
+    }
+  };
 
   return (
-    <form className="space-y-3" action={dispatch}>
+    <form className="space-y-3" action={onSubmit}>
       <div className="flex-1 items-center justify-center rounded-lg bg-white px-6 pb-4 pt-8">
         <h1 className={`${roboto.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -36,6 +49,7 @@ export default function LoginForm() {
                 name="username"
                 placeholder="Enter your username"
                 required
+                defaultValue={recentUsername}
               />
               <UserIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
