@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 
 import { ApiResponse, TaskPagination, TaskType } from './definitions';
 import { PaginationTaskSchema } from './decoders';
+import { tasksTodoPage01, tasksTodoEmpty } from './placeholder-data';
 
 export async function createSomeObject() {
     // Send request create object
@@ -31,6 +32,8 @@ export const fetchTask = async (page: number, status: TaskType = TaskType.TODO):
         const response = await fetch(`https://todo-list-api-mfchjooefq-as.a.run.app/todo-list?${queryparams}`)
 
         const data = await response.json();
+        // const data = tasksTodoEmpty;
+        // const data = tasksTodoPage01;
         return { data: PaginationTaskSchema.parse(data) };
     } catch (error) {
         return { error: "Failed to fetch tasks, please try again later." };

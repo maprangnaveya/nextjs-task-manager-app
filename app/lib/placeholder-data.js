@@ -266,7 +266,13 @@ const tasksTodoPage01 = {
         }
     ],
     pageNumber: 1,
-    totalPages: 3
+    // totalPages: 3
+    totalPages: 1
+}
+const tasksTodoEmpty = {
+    tasks: [],
+    pageNumber: 1,
+    totalPages: 1
 }
 
 module.exports = {
@@ -275,4 +281,5 @@ module.exports = {
   invoices,
   revenue,
   tasksTodoPage01,
+  tasksTodoEmpty,
 };
