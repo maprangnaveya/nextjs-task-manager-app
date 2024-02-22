@@ -3,7 +3,6 @@
 import dayjs from 'dayjs';
 import isToday from 'dayjs/plugin/isToday';
 import isTomorrow from 'dayjs/plugin/isTomorrow';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useReducer } from 'react';
 import { useInView } from 'react-intersection-observer';

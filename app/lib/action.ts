@@ -2,26 +2,11 @@
 
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
 
 import { ApiResponse, TaskPagination, TaskType } from './definitions';
 import { PaginationTaskSchema } from './decoders';
 import { tasksTodoPage01, tasksTodoEmpty } from './placeholder-data';
 
-export async function createSomeObject() {
-    // Send request create object
-
-    //   revalidatePath to clears cache and trigger a new request to the server
-    revalidatePath('/dashboard/invoices');
-    //   redirect to page
-    redirect('/dashboard/invoices');
-}
-
-export async function deleteInvoice(id: string) {
-    // await sql`DELETE FROM invoices WHERE id = ${id}`;
-    revalidatePath('/dashboard/invoices');
-}
 
 export const fetchTask = async (page: number, status: TaskType = TaskType.TODO): Promise<ApiResponse<TaskPagination>> => {
 
