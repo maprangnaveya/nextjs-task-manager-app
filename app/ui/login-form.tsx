@@ -27,6 +27,11 @@ export default function LoginForm() {
     }
   };
 
+  useEffect(() => {
+    if (errorMessage) {
+      secureLocalStorage.removeItem('username');
+    }
+  }, [errorMessage]);
   return (
     <form className="space-y-3" action={onSubmit}>
       <div className="flex-1 items-center justify-center rounded-lg bg-white px-6 pb-4 pt-8">
