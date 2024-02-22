@@ -14,14 +14,11 @@ export const fetchTask = async (page: number, status: TaskType = TaskType.TODO):
 
     const queryparams = `offset=${page}&limit=${limit}&sortBy=createdAt&isAsc=true&status=${status}`
     try {
-        // throw new Error("Failed to fetch tasks, please try again later.");
+        const response = await fetch(`https://todo-list-api-mfchjooefq-as.a.run.app/todo-list?${queryparams}`)
 
-        // const response = await fetch(`https://todo-list-api-mfchjooefq-as.a.run.app/todo-list?${queryparams}`)
-
-        // const data = await response.json();
+        const data = await response.json();
         // const data = tasksTodoEmpty;
-        const data = tasksTodoPage01;
-        console.log(">>> data: ", data)
+        // const data = tasksTodoPage01;
         return { data: PaginationTaskSchema.parse(data) };
     } catch (error) {
         return { error: "Failed to fetch tasks, please try again later." };
