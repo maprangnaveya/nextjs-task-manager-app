@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 
 import TaskTabs from './ui/main/task-tabs';
-import { InvoicesTableSkeleton } from './ui/skeletons';
+import { TaskInifiniteScrollSkeleton } from './ui/skeletons';
 import { TaskInifiniteScroll } from './ui/main/task-list';
 import { LogoutButton } from './ui/logout-button';
 import { Hero } from './ui/hero';
@@ -17,7 +17,7 @@ export default function Page() {
         </div>
         <div className="relative flex w-full">
           <div className="relative w-full">
-            <Suspense fallback={<InvoicesTableSkeleton />}>
+            <Suspense fallback={<TaskInifiniteScrollSkeleton />}>
               <TaskInifiniteScroll />
             </Suspense>
           </div>
