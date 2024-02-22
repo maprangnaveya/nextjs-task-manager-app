@@ -194,7 +194,7 @@ export function TaskInifiniteScroll() {
     <>
       <div className="flex w-full flex-col items-start justify-start gap-6">
         {state.isLoading && (
-          <div>
+          <div className="absolute self-center">
             <SpinnerLoading />
           </div>
         )}
@@ -215,7 +215,7 @@ export function TaskInifiniteScroll() {
             return (
               <div
                 key={`task-list-date-group-${dateGroup}`}
-                className="flex w-full flex-col"
+                className="relative flex w-full flex-col"
               >
                 <h2 className="text-2xl font-medium">
                   {getGroupDateLabel(dateGroup)}
