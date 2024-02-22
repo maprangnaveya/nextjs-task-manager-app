@@ -14,6 +14,7 @@ import { fetchTask } from '@/app/lib/action';
 import { TaskData, TaskPagination, TaskType } from '@/app/lib/definitions';
 
 import { Card, DeleteCardAction } from './task-card';
+import { SpinnerLoading } from '../spinner-loading';
 
 dayjs.extend(isToday);
 dayjs.extend(isTomorrow);
@@ -21,14 +22,23 @@ dayjs.extend(isTomorrow);
 const enum ReducerAction {
   SetPaginationTasks,
   AddPaginationTasks,
+  SetErrorMessage,
+  SetLoading,
 }
-
 type Action =
   | {
       type: ReducerAction.SetPaginationTasks;
       pagination: TaskPagination;
     }
-  | { type: ReducerAction.AddPaginationTasks; pagination: TaskPagination };
+  | {
+      type: ReducerAction.AddPaginationTasks;
+      pagination: TaskPagination;
+    }
+  | {
+      type: ReducerAction.SetErrorMessage;
+      errorMessage?: string;
+    }
+  | { type: ReducerAction.SetLoading; isLoading: boolean };
 
 type TasksGroupByDate = { [date: string]: Array<TaskData> };
 type State = {
@@ -36,6 +46,8 @@ type State = {
   tasksGroupByDate: TasksGroupByDate;
   currentPage: number;
   totalPage: number;
+  errorMessage: string;
+  isLoading: boolean;
 };
 
 const initialState = {
@@ -43,6 +55,8 @@ const initialState = {
   tasksGroupByDate: {},
   currentPage: 1,
   totalPage: 1,
+  errorMessage: '',
+  isLoading: false,
 };
 
 const groupTasksByDate = (tasks: Array<TaskData>) => {
@@ -57,26 +71,48 @@ const groupTasksByDate = (tasks: Array<TaskData>) => {
   });
   return groupByDate;
 };
+const getErrorMessage = (tasks: Array<TaskData>): string => {
+  if (tasks.length == 0) {
+    return 'You do not have any tasks yet! Congrats!';
+  } else {
+    return '';
+  }
+};
 const mainReducer = (state: State, action: Action) => {
   switch (action.type) {
     case ReducerAction.SetPaginationTasks: {
       const newTasks = [...state.tasks, ...action.pagination.tasks];
       return {
         ...state,
+        errorMessage: getErrorMessage(newTasks),
         tasks: newTasks,
         tasksGroupByDate: groupTasksByDate(newTasks),
         currentPage: action.pagination.pageNumber,
         totalPage: action.pagination.totalPages,
+        isLoading: false,
       };
     }
     case ReducerAction.AddPaginationTasks: {
+      const newTasks = action.pagination.tasks;
       return {
         ...state,
-        tasks: action.pagination.tasks,
-        tasksGroupByDate: groupTasksByDate(action.pagination.tasks),
+        errorMessage: getErrorMessage(newTasks),
+        tasks: newTasks,
+        tasksGroupByDate: groupTasksByDate(newTasks),
         currentPage: action.pagination.pageNumber,
         totalPage: action.pagination.totalPages,
+        isLoading: false,
       };
+    }
+    case ReducerAction.SetErrorMessage: {
+      return {
+        ...state,
+        errorMessage: action.errorMessage || '',
+        isLoading: false,
+      };
+    }
+    case ReducerAction.SetLoading: {
+      return { ...state, isLoading: action.isLoading };
     }
   }
 };
@@ -109,14 +145,24 @@ export function TaskInifiniteScroll() {
   const [state, dispatch] = useReducer(mainReducer, initialState);
   const fetchTasksWithPagination = (
     page: number,
-    reducerAction: ReducerAction,
+    reducerAction:
+      | ReducerAction.AddPaginationTasks
+      | ReducerAction.SetPaginationTasks,
   ) => {
     const taskStatusType = getTaskStatusType(searchParams.get('status'));
+
     fetchTask(page, taskStatusType).then((newPaginationTasks) => {
-      dispatch({
-        type: reducerAction,
-        pagination: newPaginationTasks,
-      });
+      if (newPaginationTasks.data) {
+        dispatch({
+          type: reducerAction,
+          pagination: newPaginationTasks.data,
+        });
+      } else {
+        dispatch({
+          type: ReducerAction.SetErrorMessage,
+          errorMessage: newPaginationTasks.error,
+        });
+      }
     });
   };
 
@@ -136,12 +182,25 @@ export function TaskInifiniteScroll() {
 
   useEffect(() => {
     console.log('!! status changed!', searchParams.get('status'));
+    dispatch({
+      type: ReducerAction.SetLoading,
+      isLoading: true,
+    });
     fetchTasksWithPagination(0, ReducerAction.AddPaginationTasks);
   }, [searchParams.get('status')]);
 
+  console.log('>>>> state.errorMessage: ', state.errorMessage);
   return (
     <>
       <div className="flex w-full flex-col items-start justify-start gap-6">
+        {state.isLoading && (
+          <div className="absolute self-center">
+            <SpinnerLoading />
+          </div>
+        )}
+        {state.errorMessage && (
+          <p className="w-full text-center">{state.errorMessage}</p>
+        )}
         {Object.keys(state.tasksGroupByDate)
           .sort((a: string, b: string) => {
             if (a < b) {
@@ -156,7 +215,7 @@ export function TaskInifiniteScroll() {
             return (
               <div
                 key={`task-list-date-group-${dateGroup}`}
-                className="flex w-full flex-col"
+                className="relative flex w-full flex-col"
               >
                 <h2 className="text-2xl font-medium">
                   {getGroupDateLabel(dateGroup)}
@@ -188,7 +247,7 @@ export function TaskInifiniteScroll() {
       <section>
         {state.currentPage != state.totalPage && (
           <div ref={ref}>
-            <Image src="./spinner.svg" alt="spinner" width={50} height={50} />
+            <SpinnerLoading />
           </div>
         )}
       </section>
