@@ -14,6 +14,7 @@ import { fetchTask } from '@/app/lib/action';
 import { TaskData, TaskPagination, TaskType } from '@/app/lib/definitions';
 
 import { Card, DeleteCardAction } from './task-card';
+import { SpinnerLoading } from '../spinner-loading';
 
 dayjs.extend(isToday);
 dayjs.extend(isTomorrow);
@@ -22,6 +23,7 @@ const enum ReducerAction {
   SetPaginationTasks,
   AddPaginationTasks,
   SetErrorMessage,
+  SetLoading,
 }
 type Action =
   | {
@@ -38,7 +40,8 @@ type Action =
       type: ReducerAction.SetErrorMessage;
       pagination?: TaskPagination;
       errorMessage?: string;
-    };
+    }
+  | { type: ReducerAction.SetLoading; isLoading: boolean };
 
 type TasksGroupByDate = { [date: string]: Array<TaskData> };
 type State = {
@@ -47,6 +50,7 @@ type State = {
   currentPage: number;
   totalPage: number;
   errorMessage: string;
+  isLoading: boolean;
 };
 
 const initialState = {
@@ -55,6 +59,7 @@ const initialState = {
   currentPage: 1,
   totalPage: 1,
   errorMessage: '',
+  isLoading: false,
 };
 
 const groupTasksByDate = (tasks: Array<TaskData>) => {
@@ -88,6 +93,7 @@ const mainReducer = (state: State, action: Action) => {
           tasksGroupByDate: groupTasksByDate(newTasks),
           currentPage: action.pagination?.pageNumber,
           totalPage: action.pagination?.totalPages,
+          isLoading: false,
         };
       } else {
         return state;
@@ -103,6 +109,7 @@ const mainReducer = (state: State, action: Action) => {
           tasksGroupByDate: groupTasksByDate(newTasks),
           currentPage: action.pagination?.pageNumber,
           totalPage: action.pagination?.totalPages,
+          isLoading: false,
         };
       } else {
         return state;
@@ -112,7 +119,11 @@ const mainReducer = (state: State, action: Action) => {
       return {
         ...state,
         errorMessage: action.errorMessage || '',
+        isLoading: false,
       };
+    }
+    case ReducerAction.SetLoading: {
+      return { ...state, isLoading: action.isLoading };
     }
   }
 };
@@ -145,9 +156,16 @@ export function TaskInifiniteScroll() {
   const [state, dispatch] = useReducer(mainReducer, initialState);
   const fetchTasksWithPagination = (
     page: number,
-    reducerAction: ReducerAction,
+    reducerAction:
+      | ReducerAction.AddPaginationTasks
+      | ReducerAction.SetPaginationTasks,
   ) => {
     const taskStatusType = getTaskStatusType(searchParams.get('status'));
+    dispatch({
+      type: ReducerAction.SetLoading,
+      isLoading: true,
+    });
+
     fetchTask(page, taskStatusType).then((newPaginationTasks) => {
       if (newPaginationTasks.data) {
         dispatch({
@@ -182,9 +200,15 @@ export function TaskInifiniteScroll() {
     fetchTasksWithPagination(0, ReducerAction.AddPaginationTasks);
   }, [searchParams.get('status')]);
 
+  console.log('>>>> state.errorMessage: ', state.errorMessage);
   return (
     <>
       <div className="flex w-full flex-col items-start justify-start gap-6">
+        {state.isLoading && (
+          <div>
+            <SpinnerLoading />
+          </div>
+        )}
         {state.errorMessage && (
           <p className="w-full text-center">{state.errorMessage}</p>
         )}
@@ -234,7 +258,7 @@ export function TaskInifiniteScroll() {
       <section>
         {state.currentPage != state.totalPage && (
           <div ref={ref}>
-            <Image src="./spinner.svg" alt="spinner" width={50} height={50} />
+            <SpinnerLoading />
           </div>
         )}
       </section>
