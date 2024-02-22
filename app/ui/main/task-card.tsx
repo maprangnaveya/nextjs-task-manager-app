@@ -24,7 +24,7 @@ export const DeleteCardAction = (onSwipeDelete: OnSwipeDeleteCallback) => {
 
 export const Card = ({ title, description }: TaskData) => {
   return (
-    <div className="w-full p-2 hover:cursor-pointer hover:bg-purple-100">
+    <div className="w-full rounded-lg p-2 hover:cursor-pointer hover:bg-purple-100 hover:text-zinc-800">
       <div className="flex flex-col">
         <h3 className="truncate text-xl font-medium">{title}</h3>
         <p className="truncate text-sm">{description}</p>
