@@ -21,14 +21,24 @@ dayjs.extend(isTomorrow);
 const enum ReducerAction {
   SetPaginationTasks,
   AddPaginationTasks,
+  SetErrorMessage,
 }
-
 type Action =
   | {
       type: ReducerAction.SetPaginationTasks;
-      pagination: TaskPagination;
+      pagination?: TaskPagination;
+      errorMessage?: string;
     }
-  | { type: ReducerAction.AddPaginationTasks; pagination: TaskPagination };
+  | {
+      type: ReducerAction.AddPaginationTasks;
+      pagination?: TaskPagination;
+      errorMessage?: string;
+    }
+  | {
+      type: ReducerAction.SetErrorMessage;
+      pagination?: TaskPagination;
+      errorMessage?: string;
+    };
 
 type TasksGroupByDate = { [date: string]: Array<TaskData> };
 type State = {
@@ -69,24 +79,39 @@ const getErrorMessage = (tasks: Array<TaskData>): string => {
 const mainReducer = (state: State, action: Action) => {
   switch (action.type) {
     case ReducerAction.SetPaginationTasks: {
-      const newTasks = [...state.tasks, ...action.pagination.tasks];
-      return {
-        ...state,
-        errorMessage: getErrorMessage(newTasks),
-        tasks: newTasks,
-        tasksGroupByDate: groupTasksByDate(newTasks),
-        currentPage: action.pagination.pageNumber,
-        totalPage: action.pagination.totalPages,
-      };
+      if (action.pagination) {
+        const newTasks = [...state.tasks, ...(action.pagination?.tasks || [])];
+        return {
+          ...state,
+          errorMessage: getErrorMessage(newTasks),
+          tasks: newTasks,
+          tasksGroupByDate: groupTasksByDate(newTasks),
+          currentPage: action.pagination?.pageNumber,
+          totalPage: action.pagination?.totalPages,
+        };
+      } else {
+        return state;
+      }
     }
     case ReducerAction.AddPaginationTasks: {
+      if (action.pagination) {
+        const newTasks = action.pagination?.tasks || [];
+        return {
+          ...state,
+          errorMessage: getErrorMessage(newTasks),
+          tasks: newTasks,
+          tasksGroupByDate: groupTasksByDate(newTasks),
+          currentPage: action.pagination?.pageNumber,
+          totalPage: action.pagination?.totalPages,
+        };
+      } else {
+        return state;
+      }
+    }
+    case ReducerAction.SetErrorMessage: {
       return {
         ...state,
-        errorMessage: getErrorMessage(action.pagination.tasks),
-        tasks: action.pagination.tasks,
-        tasksGroupByDate: groupTasksByDate(action.pagination.tasks),
-        currentPage: action.pagination.pageNumber,
-        totalPage: action.pagination.totalPages,
+        errorMessage: action.errorMessage || '',
       };
     }
   }
@@ -124,10 +149,17 @@ export function TaskInifiniteScroll() {
   ) => {
     const taskStatusType = getTaskStatusType(searchParams.get('status'));
     fetchTask(page, taskStatusType).then((newPaginationTasks) => {
-      dispatch({
-        type: reducerAction,
-        pagination: newPaginationTasks,
-      });
+      if (newPaginationTasks.data) {
+        dispatch({
+          type: reducerAction,
+          pagination: newPaginationTasks.data,
+        });
+      } else {
+        dispatch({
+          type: ReducerAction.SetErrorMessage,
+          errorMessage: newPaginationTasks.error,
+        });
+      }
     });
   };
 
