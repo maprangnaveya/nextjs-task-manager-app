@@ -12,7 +12,7 @@ export default function Page() {
       <LogoutButton />
       <Hero />
       <div className="mt-4 flex w-full flex-col items-center justify-center gap-4">
-        <div className="px-6 py-10">
+        <div className="flex pb-4">
           <TaskTabs />
         </div>
         <div className="relative flex w-full">
