@@ -150,10 +150,6 @@ export function TaskInifiniteScroll() {
       | ReducerAction.SetPaginationTasks,
   ) => {
     const taskStatusType = getTaskStatusType(searchParams.get('status'));
-    dispatch({
-      type: ReducerAction.SetLoading,
-      isLoading: true,
-    });
 
     fetchTask(page, taskStatusType).then((newPaginationTasks) => {
       if (newPaginationTasks.data) {
@@ -186,6 +182,10 @@ export function TaskInifiniteScroll() {
 
   useEffect(() => {
     console.log('!! status changed!', searchParams.get('status'));
+    dispatch({
+      type: ReducerAction.SetLoading,
+      isLoading: true,
+    });
     fetchTasksWithPagination(0, ReducerAction.AddPaginationTasks);
   }, [searchParams.get('status')]);
 
