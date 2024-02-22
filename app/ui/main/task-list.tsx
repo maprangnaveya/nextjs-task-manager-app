@@ -36,6 +36,7 @@ type State = {
   tasksGroupByDate: TasksGroupByDate;
   currentPage: number;
   totalPage: number;
+  errorMessage: string;
 };
 
 const initialState = {
@@ -43,6 +44,7 @@ const initialState = {
   tasksGroupByDate: {},
   currentPage: 1,
   totalPage: 1,
+  errorMessage: '',
 };
 
 const groupTasksByDate = (tasks: Array<TaskData>) => {
@@ -57,12 +59,20 @@ const groupTasksByDate = (tasks: Array<TaskData>) => {
   });
   return groupByDate;
 };
+const getErrorMessage = (tasks: Array<TaskData>): string => {
+  if (tasks.length == 0) {
+    return 'You do not have any tasks yet! Congrats!';
+  } else {
+    return '';
+  }
+};
 const mainReducer = (state: State, action: Action) => {
   switch (action.type) {
     case ReducerAction.SetPaginationTasks: {
       const newTasks = [...state.tasks, ...action.pagination.tasks];
       return {
         ...state,
+        errorMessage: getErrorMessage(newTasks),
         tasks: newTasks,
         tasksGroupByDate: groupTasksByDate(newTasks),
         currentPage: action.pagination.pageNumber,
@@ -72,6 +82,7 @@ const mainReducer = (state: State, action: Action) => {
     case ReducerAction.AddPaginationTasks: {
       return {
         ...state,
+        errorMessage: getErrorMessage(action.pagination.tasks),
         tasks: action.pagination.tasks,
         tasksGroupByDate: groupTasksByDate(action.pagination.tasks),
         currentPage: action.pagination.pageNumber,
@@ -142,6 +153,9 @@ export function TaskInifiniteScroll() {
   return (
     <>
       <div className="flex w-full flex-col items-start justify-start gap-6">
+        {state.errorMessage && (
+          <p className="w-full text-center">{state.errorMessage}</p>
+        )}
         {Object.keys(state.tasksGroupByDate)
           .sort((a: string, b: string) => {
             if (a < b) {
