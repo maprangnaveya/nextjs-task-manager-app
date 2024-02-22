@@ -104,3 +104,8 @@ export type TaskPagination = {
   pageNumber: number,
   totalPages: number,
 }
+
+export interface ApiResponse<T> {
+  data?: T;
+  error?: string;
+}
