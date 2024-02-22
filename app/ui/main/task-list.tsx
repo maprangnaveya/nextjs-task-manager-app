@@ -28,17 +28,14 @@ const enum ReducerAction {
 type Action =
   | {
       type: ReducerAction.SetPaginationTasks;
-      pagination?: TaskPagination;
-      errorMessage?: string;
+      pagination: TaskPagination;
     }
   | {
       type: ReducerAction.AddPaginationTasks;
-      pagination?: TaskPagination;
-      errorMessage?: string;
+      pagination: TaskPagination;
     }
   | {
       type: ReducerAction.SetErrorMessage;
-      pagination?: TaskPagination;
       errorMessage?: string;
     }
   | { type: ReducerAction.SetLoading; isLoading: boolean };
@@ -84,36 +81,28 @@ const getErrorMessage = (tasks: Array<TaskData>): string => {
 const mainReducer = (state: State, action: Action) => {
   switch (action.type) {
     case ReducerAction.SetPaginationTasks: {
-      if (action.pagination) {
-        const newTasks = [...state.tasks, ...(action.pagination?.tasks || [])];
-        return {
-          ...state,
-          errorMessage: getErrorMessage(newTasks),
-          tasks: newTasks,
-          tasksGroupByDate: groupTasksByDate(newTasks),
-          currentPage: action.pagination?.pageNumber,
-          totalPage: action.pagination?.totalPages,
-          isLoading: false,
-        };
-      } else {
-        return state;
-      }
+      const newTasks = [...state.tasks, ...action.pagination.tasks];
+      return {
+        ...state,
+        errorMessage: getErrorMessage(newTasks),
+        tasks: newTasks,
+        tasksGroupByDate: groupTasksByDate(newTasks),
+        currentPage: action.pagination.pageNumber,
+        totalPage: action.pagination.totalPages,
+        isLoading: false,
+      };
     }
     case ReducerAction.AddPaginationTasks: {
-      if (action.pagination) {
-        const newTasks = action.pagination?.tasks || [];
-        return {
-          ...state,
-          errorMessage: getErrorMessage(newTasks),
-          tasks: newTasks,
-          tasksGroupByDate: groupTasksByDate(newTasks),
-          currentPage: action.pagination?.pageNumber,
-          totalPage: action.pagination?.totalPages,
-          isLoading: false,
-        };
-      } else {
-        return state;
-      }
+      const newTasks = action.pagination.tasks;
+      return {
+        ...state,
+        errorMessage: getErrorMessage(newTasks),
+        tasks: newTasks,
+        tasksGroupByDate: groupTasksByDate(newTasks),
+        currentPage: action.pagination.pageNumber,
+        totalPage: action.pagination.totalPages,
+        isLoading: false,
+      };
     }
     case ReducerAction.SetErrorMessage: {
       return {
