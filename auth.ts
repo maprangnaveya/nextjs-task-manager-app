@@ -9,16 +9,16 @@ import { users } from './app/lib/placeholder-data';
 
 
 async function getUser(username: string): Promise<User | undefined> {
+    const errorMessage = 'Your password or username is incorrect.';
     try {
         const user: User | undefined = users.find(user => user.username == username)
         if (user) {
             return user
         } else {
-            throw new Error('Your password or username is incorrect.');
+            throw new Error(errorMessage);
         }
     } catch (error) {
-        console.error('Failed to fetch user:', error);
-        throw new Error('Failed to fetch user.');
+        throw new Error(errorMessage);
     }
 }
 
