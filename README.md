@@ -10,6 +10,10 @@ In terminal run
 npm run dev
 ```
 
+## Live Demo
+
+You can test with [Live Demo hosted on Vercel](https://nextjs-task-manager-6gsqnq7u6-naveya-jintayas-projects.vercel.app)
+
 ## Features
 
 - Can see tasks by status TODO, DOING, DONE
